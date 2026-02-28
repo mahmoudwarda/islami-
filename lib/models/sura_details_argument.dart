@@ -1,7 +1,11 @@
-import 'package:islami/models/sura_model.dart';
+import 'sura_model.dart';
 
-class suraDetailsArgument {
-SuraModel suraModel;
-int index;
-suraDetailsArgument({required this.suraModel,required this.index});
+class SuraDetailsArgument {
+  final SuraModel suraModel;
+  final int index;
+
+  SuraDetailsArgument({
+    required this.suraModel,
+    required this.index,
+  });
 }

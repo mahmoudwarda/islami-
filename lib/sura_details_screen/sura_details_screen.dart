@@ -1,34 +1,30 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:islami/core/resources/colors_manager.dart';
-import 'package:islami/models/sura_details_argument.dart';
+
 import '../core/resources/assets_manager.dart';
-import '../models/sura_model.dart';
-class suraDetailsScreen extends StatefulWidget {
+import '../core/resources/colors_manager.dart';
+import '../models/sura_details_argument.dart';
+
+class SuraDetailsScreen extends StatefulWidget {
+  const SuraDetailsScreen({super.key});
+
   @override
-  State<suraDetailsScreen> createState() => _suraDetailsScreenState();
+  State<SuraDetailsScreen> createState() => _SuraDetailsScreenState();
 }
 
-class _suraDetailsScreenState extends State<suraDetailsScreen> {
-  List<String> verses =[];
-  bool isLoaded = false;
-  List <String> suraContent = [];
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
+  List<String> suraContent = [];
 
-    if (!isLoaded) {
-      final SuraModel sura =
-      ModalRoute
-          .of(context)!
-          .settings
-          .arguments as SuraModel;
-      isLoaded = true;
-    }
-  }
   @override
   Widget build(BuildContext context) {
-    suraDetailsArgument arguments = ModalRoute.of(context)?.settings.arguments as suraDetailsArgument;
-    if(suraContent.isEmpty) loudSuraContent(arguments.index+1);
+    final SuraDetailsArgument arguments =
+    ModalRoute.of(context)!.settings.arguments as SuraDetailsArgument;
+
+    if (suraContent.isEmpty) {
+      loadSuraContent(arguments.index + 1);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(arguments.suraModel.suraNameEn),
@@ -39,34 +35,55 @@ class _suraDetailsScreenState extends State<suraDetailsScreen> {
             children: [
               Image.asset(AssetsManager.quranDetailsLeft),
               Spacer(),
-              Text(arguments.suraModel.suraNameAr,style: TextStyle(color: ColorsManager.gold,fontSize: 24),textAlign: TextAlign.center,),
+              Text(
+                arguments.suraModel.suraNameAr,
+                style: TextStyle(color: ColorsManager.gold, fontSize: 24),
+              ),
               Spacer(),
               Image.asset(AssetsManager.quranDetailsRight),
             ],
           ),
           Expanded(
-              child: suraContent.isEmpty ? Center(child: CircularProgressIndicator(color: ColorsManager.gold,)):
-              Text(verses as String,style: TextStyle(color: ColorsManager.gold,fontSize: 20,fontWeight: FontWeight.bold),)
-          )
-
+            child: suraContent.isEmpty
+                ? Center(
+              child: CircularProgressIndicator(
+                color: ColorsManager.gold,
+              ),
+            )
+                : ListView.builder(
+              itemCount: suraContent.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    suraContent[index],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: ColorsManager.gold,
+                      fontSize: 20,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  void loudSuraContent(int index)async{
+  void loadSuraContent(int index) async {
     String filePath = "assets/files/Suras/$index.txt";
-    String fileContent =await rootBundle.loadString(filePath);
-    verses = fileContent.trim().split("\n");
-    await Future.delayed(Duration(seconds: 1));
-    for(int i=0;i< verses.length;i++){
-      verses[i]+="[${i+1}]";
+    String fileContent = await rootBundle.loadString(filePath);
+
+    List<String> verses = fileContent.trim().split("\n");
+
+    for (int i = 0; i < verses.length; i++) {
+      verses[i] += " [${i + 1}]";
     }
-    suraContent = verses;
+
     setState(() {
-
+      suraContent = verses;
     });
-
-
   }
 }

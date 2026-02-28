@@ -18,8 +18,14 @@ class QuranItem extends StatelessWidget {
     return InkWell(
       onTap:(){
 
-        Navigator.pushNamed(context,RoutesManager.SuraDetailsScreen,arguments: SuraModel);
-      },
+        Navigator.pushNamed(
+          context,
+          RoutesManager.suraDetailsScreen,
+          arguments: SuraDetailsArgument(
+            suraModel: suraModel,
+            index: index,
+          ),
+        );      },
       child: Row(
         children: [
           Stack(
